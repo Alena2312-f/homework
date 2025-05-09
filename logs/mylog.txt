@@ -1,8 +1,4 @@
-2025-05-08 12:28:25,261 - successful_function called at 2025-05-08T12:28:25.260567 with args: (1, 2) and kwargs: {}
-2025-05-08 12:28:25,261 - successful_function called at 2025-05-08T12:28:25.260567 with args: (1, 2) and kwargs: {}
-2025-05-08 12:28:25,261 - successful_function result: 3
-2025-05-08 12:28:25,261 - successful_function result: 3
-2025-05-08 12:28:25,276 - error_function called at 2025-05-08T12:28:25.276052 with args: (1, 0) and kwargs: {}
-2025-05-08 12:28:25,276 - error_function called at 2025-05-08T12:28:25.276052 with args: (1, 0) and kwargs: {}
-2025-05-08 12:28:25,276 - error_function error: ZeroDivisionError. Inputs: (1, 0), {}
-2025-05-08 12:28:25,276 - error_function error: ZeroDivisionError. Inputs: (1, 0), {}
+2025-05-09 12:34:01,915 - successful_function ok. Result: 3
+2025-05-09 12:34:01,915 - successful_function ok. Result: 3
+2025-05-09 12:34:02,033 - error_function error: ZeroDivisionError. Inputs: (1, 0), {}
+2025-05-09 12:34:02,033 - error_function error: ZeroDivisionError. Inputs: (1, 0), {}

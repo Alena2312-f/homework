@@ -1,0 +1,12 @@
+2025-05-09 12:34:47,305 - successful_function ok. Result: 3
+2025-05-09 12:34:47,305 - successful_function ok. Result: 3
+2025-05-09 12:34:47,411 - error_function error: ZeroDivisionError. Inputs: (1, 0), {}
+2025-05-09 12:34:47,411 - error_function error: ZeroDivisionError. Inputs: (1, 0), {}
+2025-05-09 12:35:29,138 - successful_function ok. Result: 3
+2025-05-09 12:35:29,138 - successful_function ok. Result: 3
+2025-05-09 12:35:29,236 - error_function error: ZeroDivisionError. Inputs: (1, 0), {}
+2025-05-09 12:35:29,236 - error_function error: ZeroDivisionError. Inputs: (1, 0), {}
+2025-05-09 12:36:03,621 - successful_function ok. Result: 3
+2025-05-09 12:36:03,621 - successful_function ok. Result: 3
+2025-05-09 12:36:03,788 - error_function error: ZeroDivisionError. Inputs: (1, 0), {}
+2025-05-09 12:36:03,788 - error_function error: ZeroDivisionError. Inputs: (1, 0), {}

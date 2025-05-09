@@ -1,6 +1,5 @@
 import logging
 import os
-from datetime import datetime
 
 
 # Настройка логирования
@@ -45,12 +44,10 @@ def log(filename=None):
     def decorator(func):
         def wrapper(*args, **kwargs):
             function_name = func.__name__
-            start_time = datetime.now()
-            logger.info(f"{function_name} called at {start_time.isoformat()} with args: {args} and kwargs: {kwargs}")
 
             try:
                 result = func(*args, **kwargs)
-                logger.info(f"{function_name} result: {result}")
+                logger.info(f"{func.__name__} ok. Result: {result}")
                 return result
             except Exception as e:
                 error_message = f"{function_name} error: {type(e).__name__}. Inputs: {args}, {kwargs}"
