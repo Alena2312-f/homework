@@ -3,7 +3,6 @@ import pytest
 from src.generators import card_number_generator, filter_by_currency, transaction_descriptions
 
 
-
 # Фикстура для тестовых транзакций
 @pytest.fixture
 def transactions():
