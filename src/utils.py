@@ -36,8 +36,9 @@ def convert_to_rub(transaction: dict) -> float:
     Returns:
         float: Сумма транзакции в рублях.
     """
-    amount = transaction['amount']  # Получаем сумму транзакции
-    currency = transaction['currency']  # Получаем валюту транзакции
+
+    amount = transaction["operationAmount"]['amount'] # Получаем сумму транзакции
+    currency = transaction["operationAmount"]['currency']["code"] # Получаем валюту транзакции
 
     if currency == 'RUB':
         return float(amount)  # Если валюта уже в рублях, возвращаем сумму
@@ -45,7 +46,7 @@ def convert_to_rub(transaction: dict) -> float:
     # Формируем URL для API, чтобы конвертировать валюту
     url = f"https://api.apilayer.com/exchangerates_data/convert?to=RUB&from={currency}&amount={amount}"
     headers = {
-        "apikey": os.getenv("API_KEY")  # Получаем API ключ из переменных окружения
+        "apikey": API_KEY  # Получаем API ключ из переменных окружения
     }
 
     response = requests.get(url, headers=headers)  # Запрос к API
