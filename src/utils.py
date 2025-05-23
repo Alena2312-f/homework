@@ -2,6 +2,11 @@ import json
 import os
 import requests
 from dotenv import load_dotenv
+from src.logging import setup_logger
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+file_path_1 = os.path.join(current_dir, "../logs", "utils.log")
+logger = setup_logger("utils", file_path_1)
 
 # Загрузка переменных из .env-файла
 load_dotenv()
@@ -37,8 +42,8 @@ def convert_to_rub(transaction: dict) -> float:
         float: Сумма транзакции в рублях.
     """
 
-    amount = transaction["operationAmount"]['amount'] # Получаем сумму транзакции
-    currency = transaction["operationAmount"]['currency']["code"] # Получаем валюту транзакции
+    amount = transaction["operationAmount"]['amount']  # Получаем сумму транзакции
+    currency = transaction["operationAmount"]['currency']["code"]  # Получаем валюту транзакции
 
     if currency == 'RUB':
         return float(amount)  # Если валюта уже в рублях, возвращаем сумму
