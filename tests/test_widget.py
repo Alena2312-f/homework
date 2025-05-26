@@ -23,7 +23,6 @@ def card_data():
         ("Счет 73654108430135874305", "Счет **4305"),
         ("MasterCard 5185373029202738", "MasterCard  5185 37** **** 02738"),
         ("Счет 12345678901234567890", "Счет **7890"),
-
     ],
 )
 def test_mask_account_card(input_data, expected_result):
