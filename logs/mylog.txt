@@ -1,0 +1,4 @@
+2025-05-09 12:34:01,915 - successful_function ok. Result: 3
+2025-05-09 12:34:01,915 - successful_function ok. Result: 3
+2025-05-09 12:34:02,033 - error_function error: ZeroDivisionError. Inputs: (1, 0), {}
+2025-05-09 12:34:02,033 - error_function error: ZeroDivisionError. Inputs: (1, 0), {}
