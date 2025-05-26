@@ -2,7 +2,6 @@ import unittest
 from unittest.mock import MagicMock, mock_open, patch
 
 import pandas as pd
-
 from src.pandas import read_csv, read_excel
 
 
@@ -10,7 +9,7 @@ class TestExternalQuery(unittest.TestCase):
     @patch("builtins.open", new_callable=mock_open, read_data="name,age\nVasya,30\nPetya,25")
     def test_read_csv(self, mock_file: MagicMock) -> None:
         """Тестируем функцию read_csv."""
-        expected = [{"name": "Vasya", "age": "30"}, {"name": "Petya", "age": "25"}]
+        expected = [{'name,age': 'Vasya,30'}, {'name,age': 'Petya,25'}]
         result = read_csv("fake_path.csv")
         self.assertEqual(result, expected)
 

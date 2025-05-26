@@ -1,62 +1,97 @@
+import csv
 import json
 import os
-import requests
-from dotenv import load_dotenv
+
+import pandas as pd
 from src.logging import setup_logger
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 file_path_1 = os.path.join(current_dir, "../logs", "utils.log")
 logger = setup_logger("utils", file_path_1)
 
-# Загрузка переменных из .env-файла
-load_dotenv()
-# импортируем API_KEY из .env-файла
-API_KEY = os.getenv("API_KEY")
 
-
-def load_transactions(file_path: str) -> list:
-    """Функция принимает json возвращает list или dict"""
+def _read_json(json_file: str) -> list[dict | None]:
+    """Принимает на вход путь до JSON-файла и возвращает список словарей с данными о финансовых транзакциях."""
+    # Если файл, указанный в переменной json_file не существует, то вернуть пустой список.
     try:
-        with open(file_path, "r", encoding="utf-8") as file:
-            repos = json.load(file)
-        if isinstance(repos, list):
-            return repos
-        else:
-            return []
-    except Exception as e:
-        print(f"Ошибка {e}")
+        with open(json_file, "r", encoding="utf-8") as f:
+            content = f.read()
+        logger.info(f"Файл {json_file} открыт на чтение.")
+    except FileNotFoundError:
+        logger.error(f"Файл {json_file} не существует.")
         return []
 
+    # Если json-файл пустой, то вернуть пустой список.
+    try:
+        data = json.loads(content)
+        logger.info(f"Данные из файла {json_file} прочитаны.")
+    except json.JSONDecodeError:
+        logger.error(f"Ошибка чтения json из файла {json_file}.")
+        return []
 
-load_dotenv()  # Загружаем переменные окружения из .env файла
+    # Если содержимое файла не является списком (содержит несписок), то вернуть пустой список.
+    if not isinstance(data, list):
+        logger.error(f"Содержимое файла {json_file} не является объектом типа list.")
+        return []
+
+    return data
 
 
-def convert_to_rub(transaction: dict) -> float:
-    """Конвертирует сумму транзакции в рубли.
+def _read_csv(csv_file: str) -> list:
+    """Принимает на вход путь до CSV-файла и возвращает список словарей с данными о финансовых транзакциях."""
+    # Если файл, указанный в переменной csv_file не существует, то вернуть пустой список.
+    try:
+        with open(csv_file, "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f, delimiter=";")
+            data = list(reader)
+            logger.info(f"Данные из файла {csv_file} прочитаны.")
+    except FileNotFoundError:
+        logger.error(f"Файл {csv_file} не существует.")
+        return []
 
-    Args:
-        transaction (dict): Словарь с данными о транзакции, содержащий
-                            'amount' и 'currency'.
+    # Если csv-файл пустой, то вернуть пустой список.
+    if not data:
+        logger.error(f"Ошибка чтения json из файла {csv_file}.")
+        return []
 
-    Returns:
-        float: Сумма транзакции в рублях.
-    """
+    # Если содержимое файла не является списком (содержит несписок), то вернуть пустой список.
+    if not isinstance(data, list):
+        logger.error(f"Содержимое файла {csv_file} не является объектом типа list.")
+        return []
 
-    amount = transaction["operationAmount"]['amount']  # Получаем сумму транзакции
-    currency = transaction["operationAmount"]['currency']["code"]  # Получаем валюту транзакции
+    return data
 
-    if currency == 'RUB':
-        return float(amount)  # Если валюта уже в рублях, возвращаем сумму
 
-    # Формируем URL для API, чтобы конвертировать валюту
-    url = f"https://api.apilayer.com/exchangerates_data/convert?to=RUB&from={currency}&amount={amount}"
-    headers = {
-        "apikey": API_KEY  # Получаем API ключ из переменных окружения
-    }
+def _read_xlsx(xlsx_file: str) -> list:
+    """Принимает на вход путь до XLSX-файла и возвращает список словарей с данными о финансовых транзакциях."""
+    try:
+        excel_data = pd.read_excel(xlsx_file).to_dict(orient="records")
+    except FileNotFoundError:
+        logger.error(f"Файл {xlsx_file} не существует.")
+        return []
 
-    response = requests.get(url, headers=headers)  # Запрос к API
+    # Если xlsx-файл пустой, то вернуть пустой список.
+    if not excel_data:
+        logger.error(f"Ошибка чтения json из файла {xlsx_file}.")
+        return []
 
-    if response.status_code == 200:  # Если запрос успешен
-        return float(response.json()['result'])  # Возвращаем результат конвертации
-    else:
-        return float(amount)  # Если API не сработал, возвращаем сумму без изменений
+    # Если содержимое файла не является списком (содержит несписок), то вернуть пустой список.
+    if not isinstance(excel_data, list):
+        logger.error(f"Содержимое файла {xlsx_file} не является объектом типа list.")
+        return []
+
+    return excel_data
+
+
+def read_file(file_path: str) -> list[dict | None]:
+    *file_name, file_extension = file_path.split(".")
+    content: list = []
+    match file_extension:
+        case "json":
+            content = _read_json(file_path)
+        case "csv":
+            content = _read_csv(file_path)
+        case "xlsx":
+            content = _read_xlsx(file_path)
+
+    return content

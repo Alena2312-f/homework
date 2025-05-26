@@ -1,49 +1,41 @@
 import unittest
-from unittest.mock import mock_open, patch
+from unittest.mock import MagicMock, patch
 
-from src.utils import convert_to_rub
-from src.utils import load_transactions
-
-
-# noinspection PyUnusedLocal
-class TestUtils(unittest.TestCase):
-
-    # noinspection PyUnusedLocal
-    @patch("builtins.open", new_callable=mock_open, read_data="[]")
-    def test_load_transactions_empty_file(self, mock_file):
-        result = load_transactions("data/operations.json")
-        self.assertEqual(result, [])  # Проверяем, что результат пустой список
-
-    @patch("builtins.open", new_callable=mock_open, read_data='[{"amount": 100, "currency": "USD"}]')
-    def test_load_transactions_valid_file(self, mock_file):
-        result = load_transactions("data/operations.json")
-        self.assertEqual(len(result), 1)  # Проверяем, что загружен один элемент
-        self.assertEqual(result[0]["amount"], 100)  # Проверяем, что сумма равна 100
-
-    @patch("builtins.open", new_callable=mock_open, read_data="not a json")
-    def test_load_transactions_invalid_json(self, mock_file):
-        result = load_transactions("data/operations.json")
-        self.assertEqual(result, [])  # Проверяем, что результат пустой список при некорректном JSON
-
-    @patch("os.path.isfile", return_value=False)
-    def test_load_transactions_file_not_exist(self, mock_isfile):
-        result = load_transactions("data/operations.json")
-        self.assertEqual(result, [])  # Проверяем, что результат пустой список если файл не существует
-
-    @patch("builtins.open", new_callable=mock_open, read_data='{"amount": 100, "currency": "USD"}')
-    def test_load_transactions_not_a_list(self, mock_file):
-        result = load_transactions("data/operations.json")
-        self.assertEqual(result, [])  # Проверяем, что результат пустой список если данные не список
-
-    @patch("requests.get")
-    def test_convert_to_rub(self, mock_get):
-        mock_get.return_value.status_code = 200
-        mock_get.return_value.json.return_value = {"result": 7500}  # Симулируем ответ API
-
-        transaction = {"operationAmount": {"amount": 100, "currency": {"code": "USD"}}}  # Тестовая транзакция
-        result = convert_to_rub(transaction)
-        self.assertEqual(result, 7500.0)  # Проверяем, что результат конвертации равен 7500
+from src.utils import read_file
 
 
-if __name__ == "__main__":
-    unittest.main()  # Запуск тестов
+class TestReadFile(unittest.TestCase):
+
+    @patch("src.utils._read_json")
+    def test_read_json_file(self, mock_read_json: MagicMock) -> None:
+        # Настройка mock-ответа
+        mock_read_json.return_value = [{"key": "value"}]
+        result = read_file("test.json")
+        mock_read_json.assert_called_once_with("test.json")
+        self.assertEqual(result, [{"key": "value"}])
+
+    @patch("src.utils._read_csv")
+    def test_read_csv_file(self, mock_read_csv: MagicMock) -> None:
+        # Настройка mock-ответа
+        mock_read_csv.return_value = [{"column1": "data1", "column2": "data2"}]
+        result = read_file("test.csv")
+        mock_read_csv.assert_called_once_with("test.csv")
+        self.assertEqual(result, [{"column1": "data1", "column2": "data2"}])
+
+    @patch("src.utils._read_xlsx")
+    def test_read_xlsx_file(self, mock_read_xlsx: MagicMock) -> None:
+        # Настройка mock-ответа
+        mock_read_xlsx.return_value = [{"column1": "data1", "column2": "data2"}]
+        result = read_file("test.xlsx")
+        mock_read_xlsx.assert_called_once_with("test.xlsx")
+        self.assertEqual(result, [{"column1": "data1", "column2": "data2"}])
+
+    def test_read_file_with_invalid_extension(self) -> None:
+        # Проверяем, что функция возвращает пустой список для неподдерживаемого формата
+        result = read_file("test.txt")
+        self.assertEqual(result, [])
+
+    def test_read_file_with_no_extension(self) -> None:
+        # Проверяем, что функция возвращает пустой список для файла без расширения
+        result = read_file("test")
+        self.assertEqual(result, [])
